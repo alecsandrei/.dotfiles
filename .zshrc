@@ -96,6 +96,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.zsh_profile
+source /etc/zsh_command_not_found
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba shell init' !!
