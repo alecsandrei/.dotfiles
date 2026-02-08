@@ -83,6 +83,14 @@ sudo apt install -y variety
 sudo apt install -y tmux
 sudo apt install -y virtualbox-qt
 
+echo "Joplin"
+wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
+
+echo "Zotero"
+curl -sL https://raw.githubusercontent.com/retorquere/zotero-deb/master/install.sh | sudo bash
+sudo apt update
+sudo apt install zotero
+
 echo "Installing assistant agents"
 curl -fsSL https://opencode.ai/install | bash
 npm install -g @github/copilot
