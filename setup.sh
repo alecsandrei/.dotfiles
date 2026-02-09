@@ -82,6 +82,7 @@ echo "Installing other applications"
 sudo apt install -y variety
 sudo apt install -y tmux
 sudo apt install -y virtualbox-qt
+sudo apt install -y graphviz
 
 echo "Joplin"
 wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
