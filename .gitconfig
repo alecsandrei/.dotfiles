@@ -7,3 +7,5 @@
 [user]
 	email = cuvuliucalexandrei@gmail.com
 	name = Alex-Andrei Cuvuliuc
+[pull]
+	rebase = true
