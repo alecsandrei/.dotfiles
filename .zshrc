@@ -96,8 +96,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.zsh_profile
-source /etc/zsh_command_not_found
-
+[ -f /etc/zsh_command_not_found ] && source /etc/zsh_command_not_found
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba shell init' !!
 export MAMBA_EXE="$HOME/miniforge3/bin/mamba"
@@ -115,4 +114,3 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 . "$HOME/.cargo/env"
-
