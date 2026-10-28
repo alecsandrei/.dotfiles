@@ -97,20 +97,68 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.zsh_profile
 [ -f /etc/zsh_command_not_found ] && source /etc/zsh_command_not_found
-# >>> mamba initialize >>>
-# !! Contents within this block are managed by 'mamba shell init' !!
-export MAMBA_EXE="$HOME/miniforge3/bin/mamba"
-export MAMBA_ROOT_PREFIX="$HOME/miniforge3"
-__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__mamba_setup"
-else
-    alias mamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+# >>> miniforge / mamba & conda lazy initialize >>>
+_conda_root=""
+for _dir in "$HOME/miniforge3" "$HOME/mambaforge" "$HOME/miniconda3" "$HOME/anaconda3" "/opt/conda" "/opt/miniforge3"; do
+    if [ -d "$_dir" ]; then
+        _conda_root="$_dir"
+        break
+    fi
+done
+
+if [ -n "$_conda_root" ]; then
+    [ -d "$_conda_root/condabin" ] && export PATH="$_conda_root/condabin:$PATH"
+
+    _lazy_load_conda() {
+        unset -f conda mamba _lazy_load_conda
+        if [ -x "$_conda_root/bin/mamba" ]; then
+            export MAMBA_EXE="$_conda_root/bin/mamba"
+            export MAMBA_ROOT_PREFIX="$_conda_root"
+            __mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+            [ $? -eq 0 ] && eval "$__mamba_setup"
+            unset __mamba_setup
+        fi
+        if [ -x "$_conda_root/bin/conda" ]; then
+            __conda_setup="$("$_conda_root/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
+            [ $? -eq 0 ] && eval "$__conda_setup"
+            unset __conda_setup
+        fi
+    }
+
+    conda() { _lazy_load_conda; conda "$@"; }
+    mamba() { _lazy_load_conda; mamba "$@"; }
 fi
-unset __mamba_setup
-# <<< mamba initialize <<<
-#
+# <<< miniforge / mamba & conda lazy initialize <<<
+
+# >>> nvm lazy initialize >>>
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -d "$NVM_DIR" ]; then
+    # Dynamically find latest installed node version without hardcoding versions
+    for _node_bin in "$NVM_DIR"/versions/node/*/bin(Nn[-1]); do
+        export PATH="$_node_bin:$PATH"
+    done
+    unset _node_bin
+
+    nvm() {
+        unset -f nvm
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+        nvm "$@"
+    }
+fi
+# <<< nvm lazy initialize <<<
 . "$HOME/.cargo/env"
+
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Added by Antigravity CLI installer
+export PATH="$HOME/.local/bin:$PATH"
+
+# Local machine overrides (not tracked in dotfiles)
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
